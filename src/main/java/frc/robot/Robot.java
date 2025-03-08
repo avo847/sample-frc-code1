@@ -10,8 +10,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -38,12 +36,6 @@ public class Robot extends TimedRobot {
 
   // TO DO: tagged for removal
   private double robotHeading;
-  private DutyCycle aileronPWM; // left-right
-  private DutyCycle elevationPWM; // forward-back
-  private double drivePWM;
-  private double directionPWM; 
-  private double drive;
-  private double direction; 
 
   // drive motors
   private WPI_TalonSRX leftMotorControllerCIM1;
@@ -109,10 +101,6 @@ public class Robot extends TimedRobot {
     // controller
     gamepadDrive = new XboxController(0);
 
-    // TO DO: Remove if not in use
-    aileronPWM = new DutyCycle(new DigitalInput(0));
-    elevationPWM = new DutyCycle(new DigitalInput(1));
-
     // pigeon IMU
     pigeonIMU = new PigeonIMU(rightMotorControllerCIM2);
     pigeonIMUData = new double[3];
@@ -151,16 +139,6 @@ public class Robot extends TimedRobot {
     rightEncoderReading = rightMotorControllerCIM1.getSelectedSensorPosition();
     SmartDashboard.putNumber("left encoder", leftEncoderReading);
     SmartDashboard.putNumber("right encoder", rightEncoderReading);
-
-    // PWM input readings
-    drivePWM = (int) elevationPWM.getHighTimeNanoseconds()/1000;
-    directionPWM = (int) aileronPWM.getHighTimeNanoseconds()/1000;
-    SmartDashboard.putNumber("aileron time high", drivePWM);
-    SmartDashboard.putNumber("elevation time high", directionPWM);
-    drive = (drivePWM - 1500) / 500;
-    direction = (directionPWM - 1500) / 500;
-    SmartDashboard.putNumber("Drive", drive);
-    SmartDashboard.putNumber("Direction", direction);
 
   }
 
@@ -204,11 +182,6 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     double leftX = gamepadDrive.getLeftX()*0.5; // from left controller
     double leftY = gamepadDrive.getLeftY()*1.0;
-    //drivePWM = (int) elevationPWM.getHighTimeNanoseconds()/1000;
-    //drive = (drivePWM - 1500) / 500;
-    //directionPWM = (int) aileronPWM.getHighTimeNanoseconds()/1000;
-    //direction = (directionPWM - 1500) / 500;    
-    // combine left controller on Windows PC and PWM input
     m_myRobot.arcadeDrive(-leftY, -leftX); // reversed inputs due to coord sys orientation
   }
 
