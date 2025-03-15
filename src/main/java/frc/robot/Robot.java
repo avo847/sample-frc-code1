@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.PowerDistribution;
@@ -32,7 +33,7 @@ public class Robot extends TimedRobot {
   private DifferentialDrive m_myRobot; // drive base
   private final PowerDistribution m_pdp = new PowerDistribution();
 
-  private XboxController gamepadDrive;
+  private PS4Controller gamepadDrive;
 
   // TO DO: tagged for removal
   private double robotHeading;
@@ -99,7 +100,7 @@ public class Robot extends TimedRobot {
     m_myRobot = new DifferentialDrive(leftMotorGroup, rightMotorGroup);
 
     // controller
-    gamepadDrive = new XboxController(0);
+    gamepadDrive = new PS4Controller(0);
 
     // pigeon IMU
     pigeonIMU = new PigeonIMU(rightMotorControllerCIM2);
@@ -207,5 +208,9 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    double leftX = gamepadDrive.getLeftX()*0.5; // from left controller
+    double leftY = gamepadDrive.getLeftY()*1.0;
+    m_myRobot.arcadeDrive(-leftY, -leftX); // reversed inputs due to coord sys orientation
+  }
 }
