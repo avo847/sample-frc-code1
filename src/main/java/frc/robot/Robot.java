@@ -115,8 +115,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-      // TODO Auto-generated method stub
-
+      super.robotInit();
       // replace deprecated motor controller code
       leftMotorControllerCIM2.follow(leftMotorControllerCIM1);
       leftMotorControllerCIM1.setInverted(false);
@@ -126,7 +125,6 @@ public class Robot extends TimedRobot {
       rightMotorControllerCIM1.setInverted(false);
       rightMotorControllerCIM2.setInverted(InvertType.FollowMaster);
       //rightMotorControllerCIM2.setInverted(InvertType.OppositeMaster);
-      super.robotInit();
   }
 
   /**
