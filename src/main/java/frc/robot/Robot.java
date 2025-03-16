@@ -8,12 +8,15 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.PS4Controller;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.PowerDistribution;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.*;
+//import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 //import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 // replace deprecated code
@@ -31,7 +34,8 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private DifferentialDrive m_myRobot; // drive base
-  private final PowerDistribution m_pdp = new PowerDistribution();
+  private final PowerDistribution m_pdp = new PowerDistribution(); //check CAN bus ID for PDP
+  //private final PowerDistribution m_pdp = new PowerDistribution(0, ModuleType.kCTRE);
 
   private PS4Controller gamepadDrive;
 
@@ -40,16 +44,18 @@ public class Robot extends TimedRobot {
 
   // drive motors
   private WPI_TalonSRX leftMotorControllerCIM1;
-  private WPI_TalonSRX leftMotorControllerCIM2;
+  private WPI_VictorSPX leftMotorControllerCIM2;
   private WPI_TalonSRX rightMotorControllerCIM1;
   private WPI_TalonSRX rightMotorControllerCIM2;
   private MotorControllerGroup leftMotorGroup; // DEPRECATED
   private MotorControllerGroup rightMotorGroup;
 
   // TO DO: replace deprecated code
-  /*
-  private GroupMotorControllers leftMotorGroup1;
-  private GroupMotorControllers rightMotorGroup1;
+  /* 
+  leftMotorControllerCIM2.follow(leftMotorControllerCIM1);
+  leftMotorControllerCIM1.setInverted(false);
+  leftMotorControllerCIM2.setInverted(InvertType.FollowMaster);
+  //leftMotorControllerCIM2.setInverted(InvertType.OppositeMaster);
   */
 
   // additional motors; controllers present, motors not
@@ -67,7 +73,6 @@ public class Robot extends TimedRobot {
   private double leftEncoderReading;
   private double rightEncoderReading;
 
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -80,11 +85,11 @@ public class Robot extends TimedRobot {
     // motor port initialization - 
     // TO DO: update numbers
     leftMotorControllerCIM1 = new WPI_TalonSRX(10);
-    leftMotorControllerCIM2 = new WPI_TalonSRX(1);
-    leftMotorGroup = new MotorControllerGroup(leftMotorControllerCIM1, leftMotorControllerCIM2);
+    leftMotorControllerCIM2 = new WPI_VictorSPX(1);
+    //leftMotorGroup = new MotorControllerGroup(leftMotorControllerCIM1, leftMotorControllerCIM2);
     rightMotorControllerCIM1 = new WPI_TalonSRX(2);
     rightMotorControllerCIM2 = new WPI_TalonSRX(3);
-    rightMotorGroup = new MotorControllerGroup(rightMotorControllerCIM1, rightMotorControllerCIM2);
+    //rightMotorGroup = new MotorControllerGroup(rightMotorControllerCIM1, rightMotorControllerCIM2);
     
     // replace deprecated code with MotorContollerGroup:
     /* 
@@ -108,6 +113,21 @@ public class Robot extends TimedRobot {
     pigeonIMU.setFusedHeading(70);
   }
 
+  @Override
+  public void robotInit() {
+      // TODO Auto-generated method stub
+
+      // replace deprecated motor controller code
+      leftMotorControllerCIM2.follow(leftMotorControllerCIM1);
+      leftMotorControllerCIM1.setInverted(false);
+      leftMotorControllerCIM2.setInverted(InvertType.FollowMaster);
+      //leftMotorControllerCIM2.setInverted(InvertType.OppositeMaster);
+      rightMotorControllerCIM2.follow(rightMotorControllerCIM1);
+      rightMotorControllerCIM1.setInverted(false);
+      rightMotorControllerCIM2.setInverted(InvertType.FollowMaster);
+      //rightMotorControllerCIM2.setInverted(InvertType.OppositeMaster);
+      super.robotInit();
+  }
 
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
